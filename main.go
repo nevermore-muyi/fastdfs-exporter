@@ -17,8 +17,8 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
-	//"github.com/prometheus/common/log"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -182,11 +182,10 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 	var config ConfigInfoJSON
 	b, err := ioutil.ReadAll(cmdOutBuff)
 	if err != nil {
-		//		log.Error(err)
-		fmt.Println("configDataParse err ", err)
+		log.Error(err)
+		//		fmt.Println("configDataParse err ", err)
 	}
 	err = json.Unmarshal(b, &config)
-	//	fmt.Println("config is ", config)
 
 	aa := config.Group_Num
 	bb := config.Storage_Num
@@ -241,18 +240,18 @@ func main() {
 		num           int
 	)
 
-	//log.AddFlags(kingpin.CommandLine)
+	log.AddFlags(kingpin.CommandLine)
 	kingpin.Version(version.Print("fastdfs_exporter"))
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 
-	//log.Infoln("Starting fastdfs_exporter", version.Info())
-	//log.Infoln("Build context", version.BuildContext())
+	log.Infoln("Starting fastdfs_exporter", version.Info())
+	log.Infoln("Build context", version.BuildContext())
 
 	exporter, err := NewExporter(*podname)
 	if err != nil {
-		//log.Errorf("Creating new Exporter went wrong, ... \n%v", err)
-		fmt.Printf("Creating new Exporter went wrong, ... \n%v", err)
+		log.Errorf("Creating new Exporter went wrong, ... \n%v", err)
+		//		fmt.Printf("Creating new Exporter went wrong, ... \n%v", err)
 	}
 	prometheus.MustRegister(exporter)
 
@@ -266,15 +265,15 @@ func main() {
 			</body>
 			</html>`))
 		if err != nil {
-			//log.Fatal(num, err)
+			log.Fatal(num, err)
 		}
 	})
 
-	//log.Infoln("Listening on", *listenAddress)
-	fmt.Println("Listening on", *listenAddress)
+	log.Infoln("Listening on", *listenAddress)
+	//	fmt.Println("Listening on", *listenAddress)
 	err = http.ListenAndServe(*listenAddress, nil)
 	if err != nil {
-		//log.Fatal(err)
+		log.Fatal(err)
 	}
 
 }
