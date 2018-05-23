@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -151,7 +150,7 @@ func execFastDFSCommand(fastData *FastDFSData) {
 	fastdfsExec1.Stdout = stdoutBuffer1
 	err1 := fastdfsExec1.Run()
 	if err1 != nil {
-		fmt.Printf("bash groupcount.sh got error: %v", err1)
+		log.Error(err1)
 	}
 	aa, _ := strconv.Atoi(strings.Replace(stdoutBuffer1.String(), "\n", "", -1))
 	fastData.groupCount = aa
@@ -161,7 +160,7 @@ func execFastDFSCommand(fastData *FastDFSData) {
 	fastdfsExec2.Stdout = stdoutBuffer2
 	err2 := fastdfsExec2.Run()
 	if err2 != nil {
-		fmt.Printf("bash active.sh got error: %v", err2)
+		log.Error(err2)
 	}
 	bb, _ := strconv.Atoi(strings.Replace(stdoutBuffer2.String(), "\n", "", -1))
 	fastData.activeState = bb
@@ -171,7 +170,7 @@ func execFastDFSCommand(fastData *FastDFSData) {
 	fastdfsExec3.Stdout = stdoutBuffer3
 	err3 := fastdfsExec3.Run()
 	if err3 != nil {
-		fmt.Printf("bash wait.sh got error: %v", err3)
+		log.Error(err3)
 	}
 	cc, _ := strconv.Atoi(strings.Replace(stdoutBuffer3.String(), "\n", "", -1))
 	fastData.waitSyncState = cc
@@ -183,7 +182,6 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 	b, err := ioutil.ReadAll(cmdOutBuff)
 	if err != nil {
 		log.Error(err)
-		//		fmt.Println("configDataParse err ", err)
 	}
 	err = json.Unmarshal(b, &config)
 
@@ -199,9 +197,8 @@ func execFastConfigCommand(fastData *FastDFSData) {
 	fastdfsExec.Stdout = stdoutBuffer
 	err := fastdfsExec.Run()
 	if err != nil {
-		fmt.Printf("cat /etc/fdfs/FastDFS.json got error: %v", err)
+		log.Error(err)
 	}
-	//	fmt.Println("stdoutBuffer is ", stdoutBuffer)
 	configDataParse(stdoutBuffer, fastData)
 
 }
@@ -210,7 +207,7 @@ func parseFastDFSCommand(fastData *FastDFSData) {
 	fastdfsExec := exec.Command("kubectl", "exec", "fastdfs-group0-storage0-0", "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
 	outfile, fileerr := os.Create("./out.txt")
 	if fileerr != nil {
-		fmt.Println("Error create out.txt")
+		log.Error(fileerr)
 	}
 	defer outfile.Close()
 
@@ -218,7 +215,7 @@ func parseFastDFSCommand(fastData *FastDFSData) {
 	writer := bufio.NewWriter(outfile)
 	err = fastdfsExec.Start()
 	if err != nil {
-		fmt.Println("fastdfsExec kubectl exec Error")
+		log.Error(err)
 	}
 	io.Copy(writer, stdoutPipe)
 	defer writer.Flush()
@@ -251,7 +248,6 @@ func main() {
 	exporter, err := NewExporter(*podname)
 	if err != nil {
 		log.Errorf("Creating new Exporter went wrong, ... \n%v", err)
-		//		fmt.Printf("Creating new Exporter went wrong, ... \n%v", err)
 	}
 	prometheus.MustRegister(exporter)
 
@@ -270,7 +266,6 @@ func main() {
 	})
 
 	log.Infoln("Listening on", *listenAddress)
-	//	fmt.Println("Listening on", *listenAddress)
 	err = http.ListenAndServe(*listenAddress, nil)
 	if err != nil {
 		log.Fatal(err)
