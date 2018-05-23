@@ -1,30 +1,111 @@
-GO           ?= go
-GOPATH       := $(firstword $(subst :, ,$(shell $(GO) env GOPATH)))
+# Copyright 2015 The Prometheus Authors
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+GO     ?= GO15VENDOREXPERIMENT=1 go
+GOPATH := $(firstword $(subst :, ,$(shell $(GO) env GOPATH)))
+GOARCH := $(shell $(GO) env GOARCH)
+GOHOSTARCH := $(shell $(GO) env GOHOSTARCH)
+
+PROMTOOL    ?= $(GOPATH)/bin/promtool
+PROMU       ?= $(GOPATH)/bin/promu
+STATICCHECK ?= $(GOPATH)/bin/staticcheck
 pkgs         = $(shell $(GO) list ./... | grep -v /vendor/)
-PROMU        ?= $(GOPATH)/bin/promu
-GODEP        ?= $(GOPATH)/bin/dep
-GOLINTER     ?= $(GOPATH)/bin/gometalinter
-GOLINTOPS    ?= --vendor --deadline=6m --disable=gas --cyclo-over=40
-BIN_DIR      ?= $(shell pwd):x
-TARGET       ?= fastdfs_exporter
 
-info:
-	@echo "build: Go build"
-	@echo "docker: build and run in docker container"
-	@echo "gometalinter: run some linting checks"
-	@echo "gotest: run go tests and reformats"
+PREFIX                  ?= $(shell pwd)
+BIN_DIR                 ?= $(shell pwd)
+DOCKER_IMAGE_NAME       ?= fastdfs-exporter
+DOCKER_IMAGE_TAG        ?= $(subst /,-,$(shell git rev-parse --abbrev-ref HEAD))
+MACH                    ?= $(shell uname -m)
+DOCKERFILE              ?= Dockerfile
 
-build: depcheck $(PROMU) gotest
-	@echo ">> building binaries"
-	@$(PROMU) build
+STATICCHECK_IGNORE =
 
-docker: gotest build
-	docker build -t fastdfs-exporter-test .
-	docker run --rm --privileged=true -p 10000:10000 -p 24007:24007 -p 24009-24108:24009-24108/tcp -i -v fastdfs-test:/data fastdfs-exporter-test
+ifeq ($(OS),Windows_NT)
+    OS_detected := Windows
+else
+    OS_detected := $(shell uname -s)
+endif
 
-gotest: vet format
+ifeq ($(GOHOSTARCH),amd64)
+	ifeq ($(OS_detected),$(filter $(OS_detected),Linux FreeBSD Darwin Windows))
+                # Only supported on amd64
+                test-flags := -race
+        endif
+endif
+
+ifeq ($(OS_detected), Linux)
+    test-e2e := test-e2e
+else
+    test-e2e := skip-test-e2e
+endif
+
+e2e-out = collector/fixtures/e2e-output.txt
+ifeq ($(MACH), ppc64le)
+	e2e-out = collector/fixtures/e2e-64k-page-output.txt
+endif
+ifeq ($(MACH), aarch64)
+	e2e-out = collector/fixtures/e2e-64k-page-output.txt
+endif
+
+# 64bit -> 32bit mapping for cross-checking. At least for amd64/386, the 64bit CPU can execute 32bit code but not the other way around, so we don't support cross-testing upwards.
+cross-test = skip-test-32bit
+define goarch_pair
+	ifeq ($$(OS_detected),Linux)
+		ifeq ($$(GOARCH),$1)
+			GOARCH_CROSS = $2
+			cross-test = test-32bit
+		endif
+	endif
+endef
+
+# By default, "cross" test with ourselves to cover unknown pairings.
+$(eval $(call goarch_pair,amd64,386))
+$(eval $(call goarch_pair,mips64,mips))
+$(eval $(call goarch_pair,mips64el,mipsel))
+
+all: style vet staticcheck checkmetrics build test $(cross-test) $(test-e2e)
+
+style:
+	@echo ">> checking code style"
+	@! gofmt -d $(shell find . -path ./vendor -prune -o -name '*.go' -print) | grep '^'
+
+test: collector/fixtures/sys/.unpacked
 	@echo ">> running tests"
-	@$(GO) test -short $(pkgs)
+	$(GO) test -short $(test-flags) $(pkgs)
+
+test-32bit: collector/fixtures/sys/.unpacked
+	@echo ">> running tests in 32-bit mode"
+	@env GOARCH=$(GOARCH_CROSS) $(GO) test $(pkgs)
+
+skip-test-32bit:
+	@echo ">> SKIP running tests in 32-bit mode: not supported on $(OS_detected)/$(GOARCH)"
+
+collector/fixtures/sys/.unpacked: collector/fixtures/sys.ttar
+	@echo ">> extracting sysfs fixtures"
+	if [ -d collector/fixtures/sys ] ; then rm -r collector/fixtures/sys ; fi
+	./ttar -C collector/fixtures -x -f collector/fixtures/sys.ttar
+	touch $@
+
+test-e2e: build collector/fixtures/sys/.unpacked
+	@echo ">> running end-to-end tests"
+	./end-to-end-test.sh
+
+skip-test-e2e:
+	@echo ">> SKIP running end-to-end tests on $(OS_detected)"
+
+checkmetrics: $(PROMTOOL)
+	@echo ">> checking metrics for correctness"
+	./checkmetrics.sh $(PROMTOOL) $(e2e-out)
 
 format:
 	@echo ">> formatting code"
@@ -34,39 +115,43 @@ vet:
 	@echo ">> vetting code"
 	@$(GO) vet $(pkgs)
 
+staticcheck: $(STATICCHECK)
+	@echo ">> running staticcheck"
+	@$(STATICCHECK) -ignore "$(STATICCHECK_IGNORE)" $(pkgs)
+
+build: $(PROMU)
+	@echo ">> building binaries"
+	@$(PROMU) build --prefix $(PREFIX)
+
+tarball: $(PROMU)
+	@echo ">> building release tarball"
+	@$(PROMU) tarball --prefix $(PREFIX) $(BIN_DIR)
+
+docker:
+ifeq ($(MACH), ppc64le)
+	$(eval DOCKERFILE=Dockerfile.ppc64le)
+endif
+	@echo ">> building docker image from $(DOCKERFILE)"
+	@docker build --file $(DOCKERFILE) -t "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" .
+
+test-docker:
+	@echo ">> testing docker image"
+	./test_image.sh "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" 9100
+
+$(GOPATH)/bin/promtool promtool:
+	@GOOS= GOARCH= $(GO) get -u github.com/prometheus/prometheus/cmd/promtool
+
 $(GOPATH)/bin/promu promu:
-	@GOOS=$(shell uname -s | tr A-Z a-z) \
-		GOARCH=$(subst x86_64,amd64,$(patsubst i%86,386,$(shell uname -m))) \
-		$(GO) get -u github.com/prometheus/promu
+	@GOOS= GOARCH= $(GO) get -u github.com/prometheus/promu
 
-promu-build: gotest promu
-	$(PROMU) build
+$(GOPATH)/bin/staticcheck:
+	@GOOS= GOARCH= $(GO) get -u honnef.co/go/tools/cmd/staticcheck
 
-tarball: build promu
-	@$(PROMU) tarball $(BIN_DIR)
 
-clean:
-	@echo ">> cleaning up"
-	@find . -type f -name '*~' -exec rm -fv {} \;
-	@$(RM) $(TARGET)
+.PHONY: all style format build test test-e2e vet tarball docker promtool promu staticcheck checkmetrics
 
-depcheck: $(GODEP)
-	@echo ">> ensure vendoring"
-	@$(GODEP) ensure
-
-gometalinter: $(GOLINTER)
-	@echo ">> linting code"
-	@$(GOLINTER) --install > /dev/null
-	@$(GOLINTER) $(GOLINTOPS) ./...
-
-$(GOPATH)/bin/dep dep:
-	@GOOS=$(shell uname -s | tr A-Z a-z) \
-		GOARCH=$(subst x86_64,amd64,$(patsubst i%86,386,$(shell uname -m))) \
-		$(GO) get -u github.com/golang/dep/cmd/dep
-
-$(GOPATH)/bin/gometalinter lint:
-	@GOOS=$(shell uname -s | tr A-Z a-z) \
-		GOARCH=$(subst x86_64,amd64,$(patsubst i%86,386,$(shell uname -m))) \
-		$(GO) get -u github.com/alecthomas/gometalinter
-
-.PHONY: all format vet build gotest promu promu-build clean $(GOPATH)/bin/promu $(GOPATH)/bin/dep dep depcheck $(GOPATH)/bin/gometalinter lint
+# Declaring the binaries at their default locations as PHONY targets is a hack
+# to ensure the latest version is downloaded on every make execution.
+# If this is not desired, copy/symlink these binaries to a different path and
+# set the respective environment variables.
+.PHONY: $(GOPATH)/bin/promtool $(GOPATH)/bin/promu $(GOPATH)/bin/staticcheck
