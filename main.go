@@ -29,13 +29,21 @@ type FastDFSData struct {
 	configGroupNum   int
 	configStorageNum int
 	groupCount       int
-	initState        int
-	syncState        int
 	waitSyncState    int
 	activeState      int
-	deletedState     int
-	offlineState     int
-	onlineState      int
+}
+
+type Exporter struct {
+	podname string
+}
+
+type ConfigInfoJSON struct {
+	Node_Hosts         []string `json:"node_Hosts"`
+	Nginx_IP           string   `json:"nginx_IP"`
+	Tracker_Server_Num int      `json:"tracker_Server_Num"`
+	Group_Num          int      `json:"group_Num"`
+	Storage_Num        int      `json:"storage_Num"`
+	FastDfs_Data       int      `json:"fastDfs_Data"`
 }
 
 var (
@@ -55,16 +63,6 @@ var (
 		"How many group counts were up at the last query.",
 		nodeLabels, nil,
 	)
-	initState = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "init_state"),
-		"How many nodes were on init_state at the last query.",
-		nodeLabels, nil,
-	)
-	syncState = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "sync_state"),
-		"How many nodes were on sync_state at the last query.",
-		nodeLabels, nil,
-	)
 	waitSyncState = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "wait_sync_state"),
 		"How many nodes were on wait_sync_state at the last query.",
@@ -75,35 +73,7 @@ var (
 		"How many nodes were on active_state at the last query.",
 		nodeLabels, nil,
 	)
-	deletedState = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "deleted_state"),
-		"How many nodes were on deleted_state at the last query.",
-		nodeLabels, nil,
-	)
-	offlineState = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "offline_state"),
-		"How many nodes were on offline_state at the last query.",
-		nodeLabels, nil,
-	)
-	onlineState = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "online_state"),
-		"How many nodes were on online_state at the last query.",
-		nodeLabels, nil,
-	)
 )
-
-type Exporter struct {
-	podname string
-}
-
-type ConfigInfoJSON struct {
-	Node_Hosts         []string `json:"node_Hosts"`
-	Nginx_IP           string   `json:"nginx_IP"`
-	Tracker_Server_Num int      `json:"tracker_Server_Num"`
-	Group_Num          int      `json:"group_Num"`
-	Storage_Num        int      `json:"storage_Num"`
-	FastDfs_Data       int      `json:"fastDfs_Data"`
-}
 
 func NewExporter(podname string) (*Exporter, error) {
 	return &Exporter{
@@ -115,13 +85,8 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- configGroupNum
 	ch <- configStorageNum
 	ch <- groupCount
-	ch <- initState
-	ch <- syncState
 	ch <- waitSyncState
 	ch <- activeState
-	ch <- deletedState
-	ch <- offlineState
-	ch <- onlineState
 }
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {

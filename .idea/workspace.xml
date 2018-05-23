@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6aab296-6c26-44e2-9f25-4e7bb82a26b8" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,10 +17,27 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="279">
-              <caret line="204" lean-forward="true" selection-start-line="204" selection-end-line="204" />
+            <state relative-caret-position="217">
+              <caret line="230" column="6" lean-forward="true" selection-start-line="230" selection-start-column="6" selection-end-line="230" selection-end-column="6" />
               <folding>
                 <element signature="e#25#368#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fastdfs-dashboard.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fastdfs-dashboard.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="518" column="21" lean-forward="true" selection-start-line="518" selection-start-column="21" selection-end-line="518" selection-end-column="21" />
+              <folding>
+                <element signature="e#794#9122#0" />
+                <element signature="e#795#2357#0" />
+                <element signature="e#2362#3923#0" />
+                <element signature="e#3928#5501#0" />
+                <element signature="e#5506#7116#0" />
+                <element signature="e#7121#9118#0" />
               </folding>
             </state>
           </provider>
@@ -66,7 +84,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1346" />
@@ -179,12 +197,12 @@
       <updated>1527079036448</updated>
       <workItem from="1527079038005" duration="660000" />
       <workItem from="1527081000705" duration="2107000" />
-      <workItem from="1527084402628" duration="729000" />
+      <workItem from="1527084402628" duration="1390000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3496000" />
+    <option name="totallyTimeSpent" value="4157000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -295,10 +313,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fastdfs-dashboard.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="518" column="21" lean-forward="true" selection-start-line="518" selection-start-column="21" selection-end-line="518" selection-end-column="21" />
+          <folding>
+            <element signature="e#794#9122#0" />
+            <element signature="e#795#2357#0" />
+            <element signature="e#2362#3923#0" />
+            <element signature="e#3928#5501#0" />
+            <element signature="e#5506#7116#0" />
+            <element signature="e#7121#9118#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="204" lean-forward="true" selection-start-line="204" selection-end-line="204" />
+        <state relative-caret-position="217">
+          <caret line="230" column="6" lean-forward="true" selection-start-line="230" selection-start-column="6" selection-end-line="230" selection-end-column="6" />
           <folding>
             <element signature="e#25#368#0" expanded="true" />
           </folding>
