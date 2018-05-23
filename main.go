@@ -104,13 +104,13 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	fastData := FastDFSData{}
 	parseFastDFSCommand(&fastData)
 	ch <- prometheus.MustNewConstMetric(
-		groupCount, prometheus.GaugeValue, float64(fastData.groupCount), "groupCount",
+		groupCount, prometheus.GaugeValue, float64(fastData.groupCount), "fastdfs",
 	)
 	ch <- prometheus.MustNewConstMetric(
-		activeState, prometheus.GaugeValue, float64(fastData.activeState), "activeState",
+		activeState, prometheus.GaugeValue, float64(fastData.activeState), "fastdfs",
 	)
 	ch <- prometheus.MustNewConstMetric(
-		waitSyncState, prometheus.GaugeValue, float64(fastData.waitSyncState), "waitSyncState",
+		waitSyncState, prometheus.GaugeValue, float64(fastData.waitSyncState), "fastdfs",
 	)
 }
 
