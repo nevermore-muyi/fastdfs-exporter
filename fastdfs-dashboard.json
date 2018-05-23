@@ -368,7 +368,107 @@
 						"show": true
 					}
 				]
-			}
+			},
+			{
+				"aliasColors": {},
+				"bars": true,
+				"dashLength": 10,
+				"dashes": false,
+				"datasource": "Prometheus",
+				"decimals": 0,
+				"fill": 1,
+				"gridPos": {
+				  "h": 7,
+				  "w": 8,
+				  "x": 8,
+				  "y": 7
+				},
+				"id": 10,
+				"legend": {
+				  "alignAsTable": false,
+				  "avg": false,
+				  "current": false,
+				  "max": false,
+				  "min": false,
+				  "show": false,
+				  "total": false,
+				  "values": false
+				},
+				"lines": false,
+				"linewidth": 1,
+				"links": [],
+				"nullPointMode": "null",
+				"percentage": false,
+				"pointradius": 5,
+				"points": false,
+				"renderer": "flot",
+				"seriesOverrides": [],
+				"spaceLength": 10,
+				"stack": false,
+				"steppedLine": false,
+				"targets": [
+				  {
+					"$$hashKey": "object:142",
+					"expr": "fastdfs_config_group_count",
+					"format": "time_series",
+					"instant": false,
+					"intervalFactor": 1,
+					"legendFormat": "config_group_count",
+					"metric": "fastdfs_alive",
+					"refId": "A",
+					"step": 2
+				  },
+				  {
+					"$$hashKey": "object:163",
+					"expr": "fastdfs_config_storage_num",
+					"format": "time_series",
+					"instant": false,
+					"intervalFactor": 1,
+					"legendFormat": "config_storage_num",
+					"refId": "B"
+				  }
+				],
+				"thresholds": [],
+				"timeFrom": null,
+				"timeShift": null,
+				"title": "Config",
+				"tooltip": {
+				  "shared": false,
+				  "sort": 0,
+				  "value_type": "individual"
+				},
+				"transparent": false,
+				"type": "graph",
+				"xaxis": {
+				  "buckets": null,
+				  "mode": "series",
+				  "name": null,
+				  "show": true,
+				  "values": [
+					"current"
+				  ]
+				},
+				"yaxes": [
+				  {
+					"$$hashKey": "object:188",
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				  },
+				  {
+					"$$hashKey": "object:189",
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				  }
+				]
+			  }
 		],
 		"refresh": "5s",
 		"schemaVersion": 16,

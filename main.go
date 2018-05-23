@@ -4,8 +4,10 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -25,18 +27,30 @@ const (
 )
 
 type FastDFSData struct {
-	groupCount    int
-	initState     int
-	syncState     int
-	waitSyncState int
-	activeState   int
-	deletedState  int
-	offlineState  int
-	onlineState   int
+	configGroupNum   int
+	configStorageNum int
+	groupCount       int
+	initState        int
+	syncState        int
+	waitSyncState    int
+	activeState      int
+	deletedState     int
+	offlineState     int
+	onlineState      int
 }
 
 var (
-	nodeLabels = []string{"node"}
+	nodeLabels     = []string{"node"}
+	configGroupNum = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "config_group_count"),
+		"How many group counts were int the config file.",
+		nodeLabels, nil,
+	)
+	configStorageNum = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "config_storage_num"),
+		"How many storage were up int the config file.",
+		nodeLabels, nil,
+	)
 	groupCount = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "group_count"),
 		"How many group counts were up at the last query.",
@@ -83,6 +97,15 @@ type Exporter struct {
 	podname string
 }
 
+type ConfigInfoJSON struct {
+	Node_Hosts         []string `json:"node_Hosts"`
+	Nginx_IP           string   `json:"nginx_IP"`
+	Tracker_Server_Num int      `json:"tracker_Server_Num"`
+	Group_Num          int      `json:"group_Num"`
+	Storage_Num        int      `json:"storage_Num"`
+	FastDfs_Data       int      `json:"fastDfs_Data"`
+}
+
 func NewExporter(podname string) (*Exporter, error) {
 	return &Exporter{
 		podname: podname,
@@ -90,6 +113,8 @@ func NewExporter(podname string) (*Exporter, error) {
 }
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
+	ch <- configGroupNum
+	ch <- configStorageNum
 	ch <- groupCount
 	ch <- initState
 	ch <- syncState
@@ -104,13 +129,19 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	fastData := FastDFSData{}
 	parseFastDFSCommand(&fastData)
 	ch <- prometheus.MustNewConstMetric(
-		groupCount, prometheus.GaugeValue, float64(fastData.groupCount), "fastdfs",
+		configGroupNum, prometheus.GaugeValue, float64(fastData.configGroupNum), namespace,
 	)
 	ch <- prometheus.MustNewConstMetric(
-		activeState, prometheus.GaugeValue, float64(fastData.activeState), "fastdfs",
+		configStorageNum, prometheus.GaugeValue, float64(fastData.configStorageNum), namespace,
 	)
 	ch <- prometheus.MustNewConstMetric(
-		waitSyncState, prometheus.GaugeValue, float64(fastData.waitSyncState), "fastdfs",
+		groupCount, prometheus.GaugeValue, float64(fastData.groupCount), namespace,
+	)
+	ch <- prometheus.MustNewConstMetric(
+		activeState, prometheus.GaugeValue, float64(fastData.activeState), namespace,
+	)
+	ch <- prometheus.MustNewConstMetric(
+		waitSyncState, prometheus.GaugeValue, float64(fastData.waitSyncState), namespace,
 	)
 }
 
@@ -147,6 +178,35 @@ func execFastDFSCommand(fastData *FastDFSData) {
 
 }
 
+func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
+	var config ConfigInfoJSON
+	b, err := ioutil.ReadAll(cmdOutBuff)
+	if err != nil {
+		//		log.Error(err)
+		fmt.Println("configDataParse err ", err)
+	}
+	err = json.Unmarshal(b, &config)
+	//	fmt.Println("config is ", config)
+
+	aa := config.Group_Num
+	bb := config.Storage_Num
+	fastData.configGroupNum = aa
+	fastData.configStorageNum = bb
+}
+
+func execFastConfigCommand(fastData *FastDFSData) {
+	stdoutBuffer := &bytes.Buffer{}
+	fastdfsExec := exec.Command("kubectl", "exec", "fastdfs-group0-storage0-0", "cat", "/etc/fdfs/FastDFS.json")
+	fastdfsExec.Stdout = stdoutBuffer
+	err := fastdfsExec.Run()
+	if err != nil {
+		fmt.Printf("cat /etc/fdfs/FastDFS.json got error: %v", err)
+	}
+	//	fmt.Println("stdoutBuffer is ", stdoutBuffer)
+	configDataParse(stdoutBuffer, fastData)
+
+}
+
 func parseFastDFSCommand(fastData *FastDFSData) {
 	fastdfsExec := exec.Command("kubectl", "exec", "fastdfs-group0-storage0-0", "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
 	outfile, fileerr := os.Create("./out.txt")
@@ -164,6 +224,7 @@ func parseFastDFSCommand(fastData *FastDFSData) {
 	io.Copy(writer, stdoutPipe)
 	defer writer.Flush()
 	fastdfsExec.Wait()
+	execFastConfigCommand(fastData)
 	execFastDFSCommand(fastData)
 }
 
@@ -198,7 +259,7 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		num, err = w.Write([]byte(`<html>
-			<head><title>FastDFS Exporter v` + version.Version + `</title></head>
+			<head><title>FastDFS Exporter` + version.Version + `</title></head>
 			<body>
 			<h1>FastDFS Exporter v` + version.Version + `</h1>
 			<p><a href='` + *metricsPath + `'>Metrics</a></p>
