@@ -5,4 +5,4 @@ COPY fastdfs_exporter /bin/fastdfs_exporter
 COPY kubectl /bin/kubectl
 
 EXPOSE      10000
-ENTRYPOINT  [ "/bin/node_exporter" ]
+ENTRYPOINT  [ "/bin/fastdfs_exporter" ]
