@@ -10,7 +10,6 @@ spec:
       labels:
         app: fastdfs-exporter
     spec:
-      serviceAccountName: fastdfs-exporter
       containers:
       - name: fastdfs-exporter
         image: registry.cn-hangzhou.aliyuncs.com/nevermore/fastdfs-exporter:v0.1

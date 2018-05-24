@@ -36,6 +36,7 @@ type FastDFSData struct {
 type FastDFSConfig struct {
 	ApiserverAddress string
 	PodName          string
+	NameSpace        string
 }
 
 type Exporter struct {
@@ -83,6 +84,7 @@ var (
 	defaultConfig = FastDFSConfig{
 		ApiserverAddress: "http://localhost:8080",
 		PodName:          "fastdfs",
+		NameSpace:        "default",
 	}
 )
 
@@ -99,6 +101,9 @@ func initConfig() {
 	}
 	if podName := os.Getenv("FASTDFS_POD_NAME"); podName != "" {
 		config.PodName = podName
+	}
+	if nameSpace := os.Getenv("NAMESPACE"); nameSpace != "" {
+		config.NameSpace = nameSpace
 	}
 }
 
@@ -179,7 +184,7 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 
 func execFastConfigCommand(fastData *FastDFSData) {
 	stdoutBuffer := &bytes.Buffer{}
-	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "cat", "/etc/fdfs/FastDFS.json")
+	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "cat", "/etc/fdfs/FastDFS.json", "-n", config.NameSpace)
 	fastdfsExec.Stdout = stdoutBuffer
 	err := fastdfsExec.Run()
 	if err != nil {
@@ -191,7 +196,7 @@ func execFastConfigCommand(fastData *FastDFSData) {
 
 func parseFastDFSCommand(fastData *FastDFSData) {
 	log.Infoln("Config ", config)
-	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
+	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf", "-n", config.NameSpace)
 	outfile, fileerr := os.Create("./out.txt")
 	if fileerr != nil {
 		log.Error(fileerr)
