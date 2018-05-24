@@ -1,4 +1,4 @@
-## Build
+## Go Build
 
 You can get the repository yourself and build using `make`:
 
@@ -7,6 +7,16 @@ $ go get github.com/ruanchen/fastdfs-exporter
 $ cd $GOPATH/src/github.com/ruanchen/fastdfs-exporter
 $ make build
 $ ./fastdfs-exporter
+```
+
+## Docker Build
+
+You can make docker images by make:
+
+```
+$ go get github.com/ruanchen/fastdfs-exporter
+$ cd $GOPATH/src/github.com/ruanchen/fastdfs-exporter
+$ make docker
 ```
 
 ## Using Docker
