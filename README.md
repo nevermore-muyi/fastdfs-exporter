@@ -27,6 +27,7 @@ fastdfs_exporter uses environment variables for configuration. Settings:
 | -------------------- | --------------------- | ------------------------------------------- |
 | APISERVER            | http://localhost:8080 | url of kubernetes apiserver for kubectl cli |
 | FASTDFS_POD_NAME     | fastdfs               | the pod name of fastdfs                     |
+| NAMESPACE            | default               | the pod namesapce of fastdfs                |
 
 ## Metrics
 
@@ -39,3 +40,7 @@ All metrics (except golang/prometheus metrics) are prefixed with "fastdfs_".
 | config_storage_num | The expected number of storage          |
 | active_state       | Total number of active state storage    |
 | wait_sync_state    | Total number of wait_sync state storage |
+
+## Kubernetes
+
+You can create deployment and service for fastdfs-exporter in kubernetes, which are in the yaml folder.
