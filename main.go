@@ -228,6 +228,7 @@ func main() {
 			log.Fatal(num, err)
 		}
 	})
+	go TestK8s()
 
 	log.Infoln("Listening on", *listenAddress)
 	err = http.ListenAndServe(*listenAddress, nil)
