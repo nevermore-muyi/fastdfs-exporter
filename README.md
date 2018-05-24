@@ -15,6 +15,7 @@ $ ./fastdfs-exporter
 docker run -d \
 -e "APISERVER=$APISERVER" \
 -e "FASTDFS_POD_NAME=$FASTDFS_POD_NAME"\
+-e "NAMESPACE=default" \
 registry.cn-hangzhou.aliyuncs.com/nevermore/fastdfs-exporter:v0.1
 ```
 
