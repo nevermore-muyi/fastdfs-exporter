@@ -20,8 +20,8 @@ spec:
             value: "http://localhost:8080"    #change to APISERVER address 
           - name: FASTDFS_POD_NAME
             value: "fastdfs"                  #change to APISERVER address fastdfs pod name
-		  - name: NAMESPACE
-		    value: "default"                  #change to fastdfs pod's namespace
+          - name: NAMESPACE
+            value: "default"                  #change to fastdfs pod's namespace
         volumeMounts:
         - name: sys-time
           mountPath: /etc/localtime
