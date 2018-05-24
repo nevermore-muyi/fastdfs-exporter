@@ -7,8 +7,7 @@
 		"pluginId": "prometheus",
 		"pluginName": "Prometheus"
 	}],
-	"__requires": [
-		{
+	"__requires": [{
 			"type": "grafana",
 			"id": "grafana",
 			"name": "Grafana",
@@ -34,473 +33,452 @@
 		}
 	],
 	"annotations": {
-		"list": []
+		"list": [{
+			"builtIn": 1,
+			"datasource": "-- Grafana --",
+			"enable": true,
+			"hide": true,
+			"iconColor": "rgba(0, 211, 255, 1)",
+			"name": "Annotations & Alerts",
+			"type": "dashboard"
+		}]
 	},
 	"editable": true,
 	"gnetId": 2121,
 	"graphTooltip": 0,
-	"hideControls": false,
-	"id": null,
+	"id": 18,
 	"links": [],
-	"refresh": "10s",
-	"rows": [{
-		"collapse": false,
-		"height": 266,
-		"panels": [
-			{
-				"aliasColors": {},
-				"bars": false,
-				"dashLength": 10,
-				"dashes": false,
-				"datasource": "Prometheus",
-				"decimals": 0,
-				"fill": 1,
-				"gridPos": {
-					"h": 7,
-					"w": 6,
-					"x": 0,
-					"y": 0
-				},
-				"id": 6,
-				"legend": {
-					"alignAsTable": true,
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": true,
-					"total": false,
-					"values": false
-				},
-				"lines": true,
-				"linewidth": 1,
-				"links": [],
-				"nullPointMode": "null",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"spaceLength": 10,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [{
-					"expr": "fastdfs_group_count",
-					"format": "time_series",
-					"intervalFactor": 2,
-					"legendFormat": "fastdfs_group_count",
-					"metric": "fastdfs_group_count",
-					"refId": "A",
-					"step": 2
-				}],
-				"thresholds": [],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "GroupCount",
-				"tooltip": {
-					"shared": true,
-					"sort": 0,
-					"value_type": "individual"
-				},
-				"type": "graph",
-				"xaxis": {
-					"buckets": null,
-					"mode": "time",
-					"name": null,
-					"show": true,
-					"values": []
-				},
-				"yaxes": [{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					},
-					{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					}
-				]
+	"panels": [{
+			"aliasColors": {},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "Prometheus",
+			"decimals": 0,
+			"fill": 1,
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 0,
+				"y": 0
 			},
-			{
-				"aliasColors": {},
-				"bars": false,
-				"dashLength": 10,
-				"dashes": false,
-				"datasource": "Prometheus",
-				"decimals": 0,
-				"fill": 1,
-				"gridPos": {
-					"h": 7,
-					"w": 8,
-					"x": 8,
-					"y": 0
-				},
-				"id": 7,
-				"legend": {
-					"alignAsTable": true,
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": true,
-					"total": false,
-					"values": false
-				},
-				"lines": true,
-				"linewidth": 1,
-				"links": [],
-				"nullPointMode": "null",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"spaceLength": 10,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [{
-					"expr": "fastdfs_active_state",
-					"format": "time_series",
-					"intervalFactor": 2,
-					"legendFormat": "fastdfs_active_state",
-					"metric": "fastdfs_active_state",
-					"refId": "A",
-					"step": 2
-				}],
-				"thresholds": [],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "Active",
-				"tooltip": {
-					"shared": true,
-					"sort": 0,
-					"value_type": "individual"
-				},
-				"type": "graph",
-				"xaxis": {
-					"buckets": null,
-					"mode": "time",
-					"name": null,
-					"show": true,
-					"values": []
-				},
-				"yaxes": [{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					},
-					{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					}
-				]
+			"id": 6,
+			"legend": {
+				"alignAsTable": true,
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
 			},
-			{
-				"aliasColors": {},
-				"bars": false,
-				"dashLength": 10,
-				"dashes": false,
-				"datasource": "Prometheus",
-				"decimals": 0,
-				"fill": 1,
-				"gridPos": {
-					"h": 7,
-					"w": 8,
-					"x": 16,
-					"y": 0
-				},
-				"id": 8,
-				"legend": {
-					"alignAsTable": true,
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": true,
-					"total": false,
-					"values": false
-				},
-				"lines": true,
-				"linewidth": 1,
-				"links": [],
-				"nullPointMode": "null",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"spaceLength": 10,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [{
-					"expr": "fastdfs_wait_sync_state",
-					"format": "time_series",
-					"intervalFactor": 2,
-					"legendFormat": "fastdfs_wait_sync_state",
-					"metric": "fastdfs_wait_sync_state",
-					"refId": "A",
-					"step": 2
-				}],
-				"thresholds": [],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "WaitSync",
-				"tooltip": {
-					"shared": true,
-					"sort": 0,
-					"value_type": "individual"
-				},
-				"type": "graph",
-				"xaxis": {
-					"buckets": null,
-					"mode": "time",
-					"name": null,
-					"show": true,
-					"values": []
-				},
-				"yaxes": [{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					},
-					{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					}
-				]
+			"lines": true,
+			"linewidth": 1,
+			"links": [],
+			"nullPointMode": "null",
+			"percentage": false,
+			"pointradius": 5,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [{
+				"expr": "fastdfs_group_count",
+				"format": "time_series",
+				"intervalFactor": 2,
+				"legendFormat": "fastdfs_group_count",
+				"metric": "fastdfs_group_count",
+				"refId": "A",
+				"step": 2
+			}],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "GroupCount",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
 			},
-			{
-				"aliasColors": {},
-				"bars": false,
-				"dashLength": 10,
-				"dashes": false,
-				"datasource": "Prometheus",
-				"decimals": 0,
-				"fill": 1,
-				"gridPos": {
-					"h": 7,
-					"w": 8,
-					"x": 0,
-					"y": 7
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
 				},
-				"id": 9,
-				"legend": {
-					"alignAsTable": true,
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": true,
-					"total": false,
-					"values": false
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			]
+		},
+		{
+			"aliasColors": {},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "Prometheus",
+			"decimals": 0,
+			"fill": 1,
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 8,
+				"y": 0
+			},
+			"id": 7,
+			"legend": {
+				"alignAsTable": true,
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": true,
+			"linewidth": 1,
+			"links": [],
+			"nullPointMode": "null",
+			"percentage": false,
+			"pointradius": 5,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [{
+				"expr": "fastdfs_active_state",
+				"format": "time_series",
+				"intervalFactor": 2,
+				"legendFormat": "fastdfs_active_state",
+				"metric": "fastdfs_active_state",
+				"refId": "A",
+				"step": 2
+			}],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "Active",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
 				},
-				"lines": true,
-				"linewidth": 1,
-				"links": [],
-				"nullPointMode": "null",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"spaceLength": 10,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [{
-					"expr": "fastdfs_wait_sync_state{node=\"fastdfs\"} + on(node) fastdfs_active_state{node=\"fastdfs\"}",
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			]
+		},
+		{
+			"aliasColors": {},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "Prometheus",
+			"decimals": 0,
+			"fill": 1,
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 16,
+				"y": 0
+			},
+			"id": 8,
+			"legend": {
+				"alignAsTable": true,
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": true,
+			"linewidth": 1,
+			"links": [],
+			"nullPointMode": "null",
+			"percentage": false,
+			"pointradius": 5,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [{
+				"expr": "fastdfs_wait_sync_state",
+				"format": "time_series",
+				"intervalFactor": 2,
+				"legendFormat": "fastdfs_wait_sync_state",
+				"metric": "fastdfs_wait_sync_state",
+				"refId": "A",
+				"step": 2
+			}],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "WaitSync",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				},
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			]
+		},
+		{
+			"aliasColors": {},
+			"bars": false,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "Prometheus",
+			"decimals": 0,
+			"fill": 1,
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 0,
+				"y": 7
+			},
+			"id": 9,
+			"legend": {
+				"alignAsTable": true,
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": true,
+				"total": false,
+				"values": false
+			},
+			"lines": true,
+			"linewidth": 1,
+			"links": [],
+			"nullPointMode": "null",
+			"percentage": false,
+			"pointradius": 5,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [{
+				"expr": "fastdfs_wait_sync_state{node=\"fastdfs\"} + on(node) fastdfs_active_state{node=\"fastdfs\"}",
+				"format": "time_series",
+				"intervalFactor": 2,
+				"legendFormat": "alive",
+				"metric": "fastdfs_alive",
+				"refId": "A",
+				"step": 2
+			}],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "Alive",
+			"tooltip": {
+				"shared": true,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "time",
+				"name": null,
+				"show": true,
+				"values": []
+			},
+			"yaxes": [{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				},
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			]
+		},
+		{
+			"aliasColors": {},
+			"bars": true,
+			"dashLength": 10,
+			"dashes": false,
+			"datasource": "Prometheus",
+			"decimals": 0,
+			"fill": 1,
+			"gridPos": {
+				"h": 7,
+				"w": 8,
+				"x": 8,
+				"y": 7
+			},
+			"id": 10,
+			"legend": {
+				"alignAsTable": false,
+				"avg": false,
+				"current": false,
+				"max": false,
+				"min": false,
+				"show": false,
+				"total": false,
+				"values": false
+			},
+			"lines": false,
+			"linewidth": 1,
+			"links": [],
+			"nullPointMode": "null",
+			"percentage": false,
+			"pointradius": 5,
+			"points": false,
+			"renderer": "flot",
+			"seriesOverrides": [],
+			"spaceLength": 10,
+			"stack": false,
+			"steppedLine": false,
+			"targets": [{
+					"$$hashKey": "object:458",
+					"expr": "fastdfs_config_group_count",
 					"format": "time_series",
-					"intervalFactor": 2,
-					"legendFormat": "alive",
+					"instant": true,
+					"intervalFactor": 1,
+					"legendFormat": "config_group_count",
 					"metric": "fastdfs_alive",
 					"refId": "A",
 					"step": 2
-				}],
-				"thresholds": [],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "Alive",
-				"tooltip": {
-					"shared": true,
-					"sort": 0,
-					"value_type": "individual"
 				},
-				"type": "graph",
-				"xaxis": {
-					"buckets": null,
-					"mode": "time",
-					"name": null,
-					"show": true,
-					"values": []
-				},
-				"yaxes": [{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					},
-					{
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					}
+				{
+					"$$hashKey": "object:459",
+					"expr": "fastdfs_config_storage_num",
+					"format": "time_series",
+					"instant": true,
+					"intervalFactor": 1,
+					"legendFormat": "config_storage_num",
+					"refId": "B"
+				}
+			],
+			"thresholds": [],
+			"timeFrom": null,
+			"timeShift": null,
+			"title": "Config",
+			"tooltip": {
+				"shared": false,
+				"sort": 0,
+				"value_type": "individual"
+			},
+			"transparent": false,
+			"type": "graph",
+			"xaxis": {
+				"buckets": null,
+				"mode": "series",
+				"name": null,
+				"show": true,
+				"values": [
+					"current"
 				]
 			},
-			{
-				"aliasColors": {},
-				"bars": true,
-				"dashLength": 10,
-				"dashes": false,
-				"datasource": "Prometheus",
-				"decimals": 0,
-				"fill": 1,
-				"gridPos": {
-					"h": 7,
-					"w": 8,
-					"x": 8,
-					"y": 7
+			"yaxes": [{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
 				},
-				"id": 10,
-				"legend": {
-					"alignAsTable": false,
-					"avg": false,
-					"current": false,
-					"max": false,
-					"min": false,
-					"show": false,
-					"total": false,
-					"values": false
-				},
-				"lines": false,
-				"linewidth": 1,
-				"links": [],
-				"nullPointMode": "null",
-				"percentage": false,
-				"pointradius": 5,
-				"points": false,
-				"renderer": "flot",
-				"seriesOverrides": [],
-				"spaceLength": 10,
-				"stack": false,
-				"steppedLine": false,
-				"targets": [{
-						"$$hashKey": "object:142",
-						"expr": "fastdfs_config_group_count",
-						"format": "time_series",
-						"instant": false,
-						"intervalFactor": 1,
-						"legendFormat": "config_group_count",
-						"metric": "fastdfs_alive",
-						"refId": "A",
-						"step": 2
-					},
-					{
-						"$$hashKey": "object:163",
-						"expr": "fastdfs_config_storage_num",
-						"format": "time_series",
-						"instant": false,
-						"intervalFactor": 1,
-						"legendFormat": "config_storage_num",
-						"refId": "B"
-					}
-				],
-				"thresholds": [],
-				"timeFrom": null,
-				"timeShift": null,
-				"title": "Config",
-				"tooltip": {
-					"shared": false,
-					"sort": 0,
-					"value_type": "individual"
-				},
-				"transparent": false,
-				"type": "graph",
-				"xaxis": {
-					"buckets": null,
-					"mode": "series",
-					"name": null,
-					"show": true,
-					"values": [
-						"current"
-					]
-				},
-				"yaxes": [{
-						"$$hashKey": "object:188",
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					},
-					{
-						"$$hashKey": "object:189",
-						"format": "short",
-						"label": null,
-						"logBase": 1,
-						"max": null,
-						"min": null,
-						"show": true
-					}
-				]
-			}
-		],
-		"repeat": null,
-		"repeatIteration": null,
-		"repeatRowId": null,
-		"showTitle": false,
-		"title": "Dashboard Row",
-		"titleSize": "h6"
-	}],
+				{
+					"format": "short",
+					"label": null,
+					"logBase": 1,
+					"max": null,
+					"min": null,
+					"show": true
+				}
+			]
+		}
+	],
+	"refresh": false,
 	"schemaVersion": 16,
 	"style": "dark",
 	"tags": [],
 	"templating": {
-		"list": [
-			{
-			"current": {
-				"tags": [],
-				"text": "Prometheus",
-				"value": "Prometheus"
-			},
-			"hide": 0,
-			"label": null,
-			"name": "datasource",
-			"options": [],
-			"query": "prometheus",
-			"refresh": 1,
-			"regex": "",
-			"type": "datasource"
-		}]
+		"list": []
 	},
 	"time": {
-		"from": "now-5m",
-		"to": "now"
+		"from": "2018-05-23T19:49:48.880Z",
+		"to": "2018-05-24T07:49:48.880Z"
 	},
 	"timepicker": {
 		"refresh_intervals": [
@@ -527,8 +505,8 @@
 			"30d"
 		]
 	},
-	"timezone": "browser",
+	"timezone": "",
 	"title": "FastDFS",
-	"version": 1,
-	"description": "Dashboard for FastDFS."
+	"uid": "Ym6GdK4ik",
+	"version": 1
 }
