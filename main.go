@@ -36,7 +36,6 @@ type FastDFSData struct {
 type FastDFSConfig struct {
 	ApiserverAddress string
 	PodName          string
-	KubectlPath      string
 }
 
 type Exporter struct {
@@ -84,7 +83,6 @@ var (
 	defaultConfig = FastDFSConfig{
 		ApiserverAddress: "http://localhost:8080",
 		PodName:          "fastdfs",
-		KubectlPath:      "/root/local/bin/kubectl",
 	}
 )
 
@@ -101,9 +99,6 @@ func initConfig() {
 	}
 	if podName := os.Getenv("FASTDFS_POD_NAME"); podName != "" {
 		config.PodName = podName
-	}
-	if kubectlPath := os.Getenv("KUBECTL_PATH"); kubectlPath != "" {
-		config.KubectlPath = kubectlPath
 	}
 }
 
@@ -137,7 +132,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 func execFastDFSCommand(fastData *FastDFSData) {
 	stdoutBuffer1 := &bytes.Buffer{}
-	fastdfsExec1 := exec.Command("bash", "groupcount.sh")
+	fastdfsExec1 := exec.Command("sh", "groupcount.sh")
 	fastdfsExec1.Stdout = stdoutBuffer1
 	err1 := fastdfsExec1.Run()
 	if err1 != nil {
@@ -147,7 +142,7 @@ func execFastDFSCommand(fastData *FastDFSData) {
 	fastData.groupCount = aa
 
 	stdoutBuffer2 := &bytes.Buffer{}
-	fastdfsExec2 := exec.Command("bash", "active.sh")
+	fastdfsExec2 := exec.Command("sh", "active.sh")
 	fastdfsExec2.Stdout = stdoutBuffer2
 	err2 := fastdfsExec2.Run()
 	if err2 != nil {
@@ -157,7 +152,7 @@ func execFastDFSCommand(fastData *FastDFSData) {
 	fastData.activeState = bb
 
 	stdoutBuffer3 := &bytes.Buffer{}
-	fastdfsExec3 := exec.Command("bash", "wait.sh")
+	fastdfsExec3 := exec.Command("sh", "wait.sh")
 	fastdfsExec3.Stdout = stdoutBuffer3
 	err3 := fastdfsExec3.Run()
 	if err3 != nil {
@@ -184,7 +179,7 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 
 func execFastConfigCommand(fastData *FastDFSData) {
 	stdoutBuffer := &bytes.Buffer{}
-	fastdfsExec := exec.Command(config.KubectlPath, "-s", config.ApiserverAddress, "exec", config.PodName, "cat", "/etc/fdfs/FastDFS.json")
+	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "cat", "/etc/fdfs/FastDFS.json")
 	fastdfsExec.Stdout = stdoutBuffer
 	err := fastdfsExec.Run()
 	if err != nil {
@@ -196,7 +191,7 @@ func execFastConfigCommand(fastData *FastDFSData) {
 
 func parseFastDFSCommand(fastData *FastDFSData) {
 	log.Infoln("Config ", config)
-	fastdfsExec := exec.Command(config.KubectlPath, "-s", config.ApiserverAddress, "exec", config.PodName, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
+	fastdfsExec := exec.Command("kubectl", "-s", config.ApiserverAddress, "exec", config.PodName, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
 	outfile, fileerr := os.Create("./out.txt")
 	if fileerr != nil {
 		log.Error(fileerr)

@@ -1,8 +1,7 @@
 FROM        quay.io/prometheus/busybox:glibc
 MAINTAINER  RuanChen@NeverMore
 
-COPY fastdfs_exporter /bin/fastdfs_exporter
-COPY kubectl /bin/kubectl
+COPY fastdfs_exporter kubectl active.sh wait.sh groupcount.sh /bin/
 RUN chmod 755 /bin/kubectl
 
 EXPOSE      10000
