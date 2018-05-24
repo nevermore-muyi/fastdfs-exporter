@@ -91,7 +91,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	fastData := FastDFSData{}
-	parseFastDFSCommand(&fastData)
+	parseFastDFSCommand(&fastData, e)
 	ch <- prometheus.MustNewConstMetric(
 		configGroupNum, prometheus.GaugeValue, float64(fastData.configGroupNum), namespace,
 	)
@@ -156,9 +156,9 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 	fastData.configStorageNum = bb
 }
 
-func execFastConfigCommand(fastData *FastDFSData) {
+func execFastConfigCommand(fastData *FastDFSData, e *Exporter) {
 	stdoutBuffer := &bytes.Buffer{}
-	fastdfsExec := exec.Command("kubectl", "exec", "fastdfs-group0-storage0-0", "cat", "/etc/fdfs/FastDFS.json")
+	fastdfsExec := exec.Command("kubectl", "exec", e.podname, "cat", "/etc/fdfs/FastDFS.json")
 	fastdfsExec.Stdout = stdoutBuffer
 	err := fastdfsExec.Run()
 	if err != nil {
@@ -168,8 +168,8 @@ func execFastConfigCommand(fastData *FastDFSData) {
 
 }
 
-func parseFastDFSCommand(fastData *FastDFSData) {
-	fastdfsExec := exec.Command("kubectl", "exec", "fastdfs-group0-storage0-0", "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
+func parseFastDFSCommand(fastData *FastDFSData, e *Exporter) {
+	fastdfsExec := exec.Command("kubectl", "exec", e.podname, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
 	outfile, fileerr := os.Create("./out.txt")
 	if fileerr != nil {
 		log.Error(fileerr)
@@ -185,7 +185,7 @@ func parseFastDFSCommand(fastData *FastDFSData) {
 	io.Copy(writer, stdoutPipe)
 	defer writer.Flush()
 	fastdfsExec.Wait()
-	execFastConfigCommand(fastData)
+	execFastConfigCommand(fastData, e)
 	execFastDFSCommand(fastData)
 }
 
@@ -197,7 +197,6 @@ func main() {
 
 	var (
 		podname       = kingpin.Flag("podname", "Pod Name For FastDFS.").Default("fastdfs-group0-storage0-0").String()
-		metricsPath   = kingpin.Flag("web.path", "Path under which to expose metrics.").Default("/metrics").String()
 		listenAddress = kingpin.Flag("web.listen-address", "Address on which to expose metrics and web interface.").Default(":10000").String()
 		num           int
 	)
@@ -222,7 +221,7 @@ func main() {
 			<head><title>FastDFS Exporter` + version.Version + `</title></head>
 			<body>
 			<h1>FastDFS Exporter v` + version.Version + `</h1>
-			<p><a href='` + *metricsPath + `'>Metrics</a></p>
+			<p><a href='` + "/metrics" + `'>Metrics</a></p>
 			</body>
 			</html>`))
 		if err != nil {
