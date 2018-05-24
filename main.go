@@ -33,6 +33,12 @@ type FastDFSData struct {
 	activeState      int
 }
 
+type FastDFSConfig struct {
+	ApiserverAddress string
+	PodName          string
+	KubectlPath      string
+}
+
 type Exporter struct {
 	podname string
 }
@@ -73,12 +79,32 @@ var (
 		"How many nodes were on active_state at the last query.",
 		nodeLabels, nil,
 	)
+
+	config        FastDFSConfig
+	defaultConfig = FastDFSConfig{
+		ApiserverAddress: "http://localhost:8080",
+		PodName:          "fastdfs",
+		KubectlPath:      "/root/local/bin/kubectl",
+	}
 )
 
 func NewExporter(podname string) (*Exporter, error) {
 	return &Exporter{
 		podname: podname,
 	}, nil
+}
+
+func initConfig() {
+	config = defaultConfig
+	if apiserver := os.Getenv("APISERVER"); apiserver != "" {
+		config.ApiserverAddress = apiserver
+	}
+	if podName := os.Getenv("FASTDFS_POD_NAME"); podName != "" {
+		config.PodName = podName
+	}
+	if kubectlPath := os.Getenv("KUBECTL_PATH"); kubectlPath != "" {
+		config.KubectlPath = kubectlPath
+	}
 }
 
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
@@ -91,7 +117,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	fastData := FastDFSData{}
-	parseFastDFSCommand(&fastData, e)
+	parseFastDFSCommand(&fastData)
 	ch <- prometheus.MustNewConstMetric(
 		configGroupNum, prometheus.GaugeValue, float64(fastData.configGroupNum), namespace,
 	)
@@ -156,9 +182,9 @@ func configDataParse(cmdOutBuff io.Reader, fastData *FastDFSData) {
 	fastData.configStorageNum = bb
 }
 
-func execFastConfigCommand(fastData *FastDFSData, e *Exporter) {
+func execFastConfigCommand(fastData *FastDFSData) {
 	stdoutBuffer := &bytes.Buffer{}
-	fastdfsExec := exec.Command("kubectl", "exec", e.podname, "cat", "/etc/fdfs/FastDFS.json")
+	fastdfsExec := exec.Command(config.KubectlPath, "-s", config.ApiserverAddress, "exec", config.PodName, "cat", "/etc/fdfs/FastDFS.json")
 	fastdfsExec.Stdout = stdoutBuffer
 	err := fastdfsExec.Run()
 	if err != nil {
@@ -168,8 +194,9 @@ func execFastConfigCommand(fastData *FastDFSData, e *Exporter) {
 
 }
 
-func parseFastDFSCommand(fastData *FastDFSData, e *Exporter) {
-	fastdfsExec := exec.Command("kubectl", "exec", e.podname, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
+func parseFastDFSCommand(fastData *FastDFSData) {
+	log.Infoln("Config ", config)
+	fastdfsExec := exec.Command(config.KubectlPath, "-s", config.ApiserverAddress, "exec", config.PodName, "/usr/bin/fdfs_monitor", "/etc/fdfs/storage.conf")
 	outfile, fileerr := os.Create("./out.txt")
 	if fileerr != nil {
 		log.Error(fileerr)
@@ -185,7 +212,7 @@ func parseFastDFSCommand(fastData *FastDFSData, e *Exporter) {
 	io.Copy(writer, stdoutPipe)
 	defer writer.Flush()
 	fastdfsExec.Wait()
-	execFastConfigCommand(fastData, e)
+	execFastConfigCommand(fastData)
 	execFastDFSCommand(fastData)
 }
 
@@ -196,11 +223,10 @@ func init() {
 func main() {
 
 	var (
-		podname       = kingpin.Flag("podname", "Pod Name For FastDFS.").Default("fastdfs-group0-storage0-0").String()
 		listenAddress = kingpin.Flag("web.listen-address", "Address on which to expose metrics and web interface.").Default(":10000").String()
 		num           int
 	)
-
+	initConfig()
 	log.AddFlags(kingpin.CommandLine)
 	kingpin.Version(version.Print("fastdfs_exporter"))
 	kingpin.HelpFlag.Short('h')
@@ -209,7 +235,7 @@ func main() {
 	log.Infoln("Starting fastdfs_exporter", version.Info())
 	log.Infoln("Build context", version.BuildContext())
 
-	exporter, err := NewExporter(*podname)
+	exporter, err := NewExporter("fastdfs")
 	if err != nil {
 		log.Errorf("Creating new Exporter went wrong, ... \n%v", err)
 	}
