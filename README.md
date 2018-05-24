@@ -1,3 +1,5 @@
+## Build
+
 You can get the repository yourself and build using `make`:
 
 ```
@@ -36,4 +38,3 @@ All metrics (except golang/prometheus metrics) are prefixed with "fastdfs_".
 | config_storage_num | The expected number of storage          |
 | active_state       | Total number of active state storage    |
 | wait_sync_state    | Total number of wait_sync state storage |
-
