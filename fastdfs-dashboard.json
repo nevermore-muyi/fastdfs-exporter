@@ -477,8 +477,8 @@
 		"list": []
 	},
 	"time": {
-		"from": "2018-05-23T19:49:48.880Z",
-		"to": "2018-05-24T07:49:48.880Z"
+		"from": "now-6h",
+		"to": "now"
 	},
 	"timepicker": {
 		"refresh_intervals": [
@@ -505,7 +505,7 @@
 			"30d"
 		]
 	},
-	"timezone": "",
+	"timezone": "browser",
 	"title": "FastDFS",
 	"uid": "Ym6GdK4ik",
 	"version": 1
